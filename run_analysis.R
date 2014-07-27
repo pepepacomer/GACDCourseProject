@@ -29,6 +29,10 @@ test <- cbind(x_test, y_test, subject_test)
 #merge train and test data
 data <- rbind (train, test)
 
+colnames(data)[c(1:561)]<- as.character(features[,2])
+colnames(data)[562] <- "Activity_ID"
+colnames(data)[563] <- "Subject"
+
 #----------------------------------------------------
 # 2.- Extracts only the measurements on the mean and 
 # standard deviation for each measurement. 
@@ -37,29 +41,24 @@ data <- rbind (train, test)
 c_mean <- grep("mean()", features[,2])
 c_std <- grep("std()", features[,2])
 columns <- c(c_mean, c_std)
-data_mean_std <- data[,columns]
+data_mean_std <- data[,c(columns, 562,563)]
 
 #----------------------------------------------------
 # 3.- Uses descriptive activity names to name the 
 #activities in the data set
 #-----------------------------------------------------
 
-colnames(data)[562]<-"activity_num"
-colnames(activity_labels)[1]<-"activity_num"
+colnames(activity_labels)[1]<-"Activity_ID"
 install.packages("plyr")
 library(plyr)
-data_merged <- join(data, activity_labels,by="activity_num")
+data_merged <- join(data_mean_std, activity_labels,by="Activity_ID")
 
 #----------------------------------------------------
 # 4.- Appropriately labels the data set with 
 # descriptive variable names. 
 #-----------------------------------------------------
 
-colnames(data_merged)[c(1:561)]<- as.character(features[,2])
-colnames(data_merged)[562] <- "Activity_ID"
-colnames(data_merged)[563] <- "Subject"
-colnames(data_merged)[564] <- "Activity"
-colnames_orig <- colnames(data_merged)
+colnames(data_merged)[82] <- "Activity"
 colnames_new <- sub("^f", "Freq", colnames(data_merged))
 colnames_new <- sub("^t", "Time", colnames_new)
 colnames_new <- gsub(",", "", colnames_new)
@@ -88,12 +87,12 @@ colnames(data_merged) <- colnames_new
 #-----------------------------------------------------
 
 
-sum_DF <-aggregate(data_merged, by=list(data_merged$Subject,data_merged$Activity),FUN=mean, na.rm=TRUE)
-colnames(sum_DF)[1] <- "Subject"
-colnames(sum_DF)[2] <- "Activity"
-sum_DF <- sum_DF[ -c(564:566) ]
+average_data <-aggregate(data_merged, by=list(data_merged$Subject,data_merged$Activity),FUN=mean, na.rm=TRUE)
+colnames(average_data)[1] <- "Subject"
+colnames(average_data)[2] <- "Activity"
+average_data <- average_data[ -c(564:566) ]
 
 #Write tidy data set to file
-write.table(sum_DF, file="sum_DF.txt", row.names = FALSE, sep = ",")
+write.table(average_data, file="average_data.txt", row.names = FALSE, sep = ",")
 
 
