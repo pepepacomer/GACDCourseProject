@@ -68,7 +68,6 @@ colnames_new <- gsub("\\(", "", colnames_new)
 colnames_new <- gsub("\\)", "", colnames_new)
 colnames_new <- gsub("Acc", "Acceleration", colnames_new)
 colnames_new <- gsub("mean", "Mean", colnames_new)
-colnames_new <- gsub("Acc", "Acceleration", colnames_new)
 colnames_new <- gsub("energy", "Energy", colnames_new)
 colnames_new <- gsub("mad", "MedianAbsDev", colnames_new)
 colnames_new <- gsub("max", "Max", colnames_new)
@@ -90,7 +89,7 @@ colnames(data_merged) <- colnames_new
 average_data <-aggregate(data_merged, by=list(data_merged$Subject,data_merged$Activity),FUN=mean, na.rm=TRUE)
 colnames(average_data)[1] <- "Subject"
 colnames(average_data)[2] <- "Activity"
-average_data <- average_data[ -c(564:566) ]
+average_data <- average_data[ -c(82:84) ]
 
 #Write tidy data set to file
 write.table(average_data, file="average_data.txt", row.names = FALSE, sep = ",")
